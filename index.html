@@ -1,0 +1,641 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  :root{
+    --bg0:#0d0d0f;
+    --bg1:#111115;
+    --bg2:#18181e;
+    --bg3:#1e1e26;
+    --bg4:#242432;
+    --border:#2a2a38;
+    --border2:#32323f;
+    --text1:#d8d8e0;
+    --text2:#888898;
+    --text3:#555566;
+    --accent:#4e8de0;
+    --accent2:#3a6db0;
+    --accent-dim:#1a2a3e;
+    --red:#e05050;
+    --green:#50c878;
+    --amber:#e0a020;
+  }
+
+  .dvr{width:100%;height:660px;background:var(--bg0);font-family:'DM Sans',sans-serif;color:var(--text1);display:flex;flex-direction:column;border-radius:6px;overflow:hidden;font-size:12px;user-select:none;}
+
+  /* ── MENU BAR ── */
+  .menu-bar{height:26px;background:var(--bg0);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:0;flex-shrink:0;}
+  .menu-logo{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:500;margin-right:12px;letter-spacing:.3px;display:flex;align-items:center;gap:5px;}
+  .menu-logo svg{width:14px;height:14px;}
+  .menu-item{padding:0 8px;height:26px;display:flex;align-items:center;font-size:11px;color:var(--text2);cursor:pointer;transition:color .12s;}
+  .menu-item:hover{color:var(--text1);}
+  .menu-spacer{flex:1;}
+  .menu-timecode{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);padding:0 10px;letter-spacing:1.5px;}
+  .menu-icons{display:flex;align-items:center;gap:2px;}
+  .menu-icon-btn{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:all .12s;}
+  .menu-icon-btn:hover{background:var(--bg3);color:var(--text1);}
+  .menu-icon-btn i{font-size:13px;}
+
+  /* ── PAGE TABS ── */
+  .page-tabs{height:30px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;padding:0 8px;gap:1px;flex-shrink:0;}
+  .page-tab{padding:0 12px;height:25px;display:flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);cursor:pointer;border-radius:3px 3px 0 0;border:1px solid transparent;border-bottom:none;transition:all .12s;font-weight:500;}
+  .page-tab:hover{color:var(--text2);background:var(--bg2);}
+  .page-tab.active{color:var(--text1);background:var(--bg2);border-color:var(--border);border-bottom-color:var(--bg2);}
+  .page-tab i{font-size:12px;}
+  .page-tab.active i{color:var(--accent);}
+
+  /* ── TOOLBAR ── */
+  .toolbar{height:32px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:4px;flex-shrink:0;}
+  .tool-sep{width:1px;height:16px;background:var(--border2);margin:0 4px;}
+  .tool-btn{height:24px;min-width:24px;padding:0 6px;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text2);font-size:10px;transition:all .12s;border:1px solid transparent;}
+  .tool-btn:hover{background:var(--bg3);color:var(--text1);border-color:var(--border);}
+  .tool-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent2);}
+  .tool-btn i{font-size:13px;}
+  .tool-spacer{flex:1;}
+  .tool-zoom{display:flex;align-items:center;gap:4px;padding:0 6px;}
+  .tool-zoom span{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+  /* ── MAIN ── */
+  .main-area{flex:1;display:flex;min-height:0;}
+
+  /* ── MEDIA POOL ── */
+  .pool-panel{width:210px;background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+  .panel-hdr{height:26px;background:var(--bg0);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:6px;flex-shrink:0;}
+  .panel-hdr-title{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--text2);font-weight:500;flex:1;}
+  .panel-hdr i{font-size:12px;color:var(--accent);}
+  .panel-hdr-btn{width:18px;height:18px;border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);}
+  .panel-hdr-btn:hover{background:var(--bg3);color:var(--text1);}
+  .panel-hdr-btn i{font-size:11px;}
+
+  .pool-toolbar{height:26px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 4px;gap:1px;}
+  .pool-tb-btn{height:20px;padding:0 5px;border-radius:2px;display:flex;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:10px;transition:all .12s;}
+  .pool-tb-btn:hover{background:var(--bg3);color:var(--text2);}
+  .pool-tb-btn.on{color:var(--accent);background:var(--accent-dim);}
+  .pool-tb-btn i{font-size:12px;}
+  .pool-tb-sep{width:1px;height:12px;background:var(--border);margin:0 2px;}
+  .pool-search{flex:1;height:18px;background:var(--bg3);border:1px solid var(--border2);border-radius:2px;padding:0 6px;font-size:10px;color:var(--text1);outline:none;font-family:'DM Sans',sans-serif;}
+  .pool-search::placeholder{color:var(--text3);}
+
+  .pool-list{flex:1;overflow-y:auto;padding:4px;}
+  .pool-list::-webkit-scrollbar{width:3px;}
+  .pool-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+  .pool-clip{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:3px;cursor:pointer;border:1px solid transparent;margin-bottom:1px;transition:all .12s;}
+  .pool-clip:hover{background:var(--bg3);}
+  .pool-clip.sel{background:var(--accent-dim);border-color:#2a4a6e;}
+  .pool-clip-thumb{width:44px;height:26px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .pool-clip-thumb i{font-size:12px;color:rgba(255,255,255,.75);position:relative;z-index:1;}
+  .pool-clip-info{flex:1;min-width:0;}
+  .clip-name{font-size:10.5px;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+  .clip-meta{font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:1px;}
+  .clip-badge{font-size:8px;padding:1px 4px;border-radius:2px;display:inline-block;margin-top:2px;}
+
+  /* ── CENTER ── */
+  .center{flex:1;display:flex;flex-direction:column;min-width:0;}
+
+  /* ── VIEWER ── */
+  .viewer{flex:1;background:#080810;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:0;}
+  .viewer-scope{position:absolute;top:8px;right:8px;width:70px;height:36px;background:rgba(0,0,0,.6);border-radius:3px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+  .viewer-scope canvas{width:60px;height:28px;}
+
+  .viewer-empty{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--text3);}
+  .viewer-empty i{font-size:40px;}
+  .viewer-empty p{font-size:10px;letter-spacing:.6px;text-transform:uppercase;text-align:center;line-height:1.7;}
+
+  .project-view{display:none;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:10px;}
+  .project-view.vis{display:flex;}
+  .video-frame{width:80%;max-width:380px;aspect-ratio:16/9;border-radius:3px;overflow:hidden;position:relative;border:1px solid var(--border2);}
+  .video-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+  .play-overlay{position:absolute;width:44px;height:44px;background:rgba(0,0,0,.65);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,.25);transition:all .15s;z-index:2;}
+  .play-overlay:hover{background:rgba(78,141,224,.5);border-color:var(--accent);}
+  .play-overlay i{font-size:18px;color:#fff;margin-left:2px;}
+
+  .viewer-meta{text-align:center;}
+  .viewer-name{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:5px;}
+  .viewer-tags{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;}
+  .vtag{font-size:9px;padding:2px 7px;border-radius:2px;background:var(--accent-dim);color:var(--accent);border:1px solid #2a4a6e;letter-spacing:.3px;text-transform:uppercase;}
+
+  .viewer-controls{position:absolute;bottom:8px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.5);padding:4px 6px;border-radius:4px;border:1px solid var(--border);}
+  .vc-btn{width:24px;height:24px;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all .12s;}
+  .vc-btn:hover{background:var(--bg3);color:var(--text1);}
+  .vc-btn.main{color:var(--accent);background:var(--accent-dim);border:1px solid var(--accent2);}
+  .vc-btn i{font-size:12px;}
+  .vc-sep{width:1px;height:14px;background:var(--border2);}
+  .vc-tc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);padding:0 6px;}
+
+  /* ── KEYFRAMES / TIMELINE ── */
+  .tl-area{height:170px;background:var(--bg1);border-top:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+  .tl-hdr{height:26px;background:var(--bg0);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:6px;flex-shrink:0;}
+  .tl-hdr-title{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:5px;}
+  .tl-hdr-title i{font-size:12px;color:var(--accent);}
+  .tl-spacer{flex:1;}
+  .tl-tc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;}
+  .tl-btn{height:18px;padding:0 7px;border-radius:2px;font-size:9px;color:var(--accent);background:var(--accent-dim);border:1px solid #2a4a6e;cursor:pointer;display:flex;align-items:center;gap:3px;letter-spacing:.3px;transition:all .12s;text-transform:uppercase;}
+  .tl-btn:hover{background:#223555;}
+  .tl-btn i{font-size:10px;}
+
+  .tl-ruler{height:18px;background:var(--bg0);border-bottom:1px solid var(--border);position:relative;overflow:hidden;flex-shrink:0;}
+  .tl-ruler-inner{position:absolute;left:70px;right:0;top:0;bottom:0;display:flex;align-items:center;}
+
+  .tl-body{flex:1;display:flex;overflow:hidden;}
+  .tl-labels{width:70px;flex-shrink:0;border-right:1px solid var(--border);}
+  .tl-label{height:28px;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;border-bottom:1px solid var(--border);letter-spacing:.4px;}
+
+  .tl-lanes{flex:1;overflow-x:auto;overflow-y:hidden;position:relative;}
+  .tl-lanes::-webkit-scrollbar{height:3px;}
+  .tl-lanes::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+  .tl-lane{height:28px;position:relative;border-bottom:1px solid var(--border);overflow:hidden;}
+  .tl-lane::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 79px,var(--border) 80px);opacity:.25;pointer-events:none;}
+
+  .tl-block{position:absolute;height:22px;top:3px;border-radius:2px;font-size:8.5px;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden;cursor:pointer;z-index:1;font-family:'JetBrains Mono',monospace;letter-spacing:.2px;transition:filter .12s;}
+  .tl-block:hover{filter:brightness(1.2);}
+
+  .tl-playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--red);z-index:10;pointer-events:none;transition:left .35s cubic-bezier(.25,.46,.45,.94);}
+  .tl-playhead::before{content:'';position:absolute;top:-1px;left:-4px;width:9px;height:7px;background:var(--red);clip-path:polygon(50% 100%,0 0,100% 0);}
+
+  /* ── INSPECTOR ── */
+  .inspector{width:175px;background:var(--bg1);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+  .insp-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;text-align:center;padding:16px;line-height:1.7;}
+  .insp-content{flex:1;overflow-y:auto;padding:10px;display:none;}
+  .insp-content.vis{display:block;}
+  .insp-content::-webkit-scrollbar{width:3px;}
+  .insp-content::-webkit-scrollbar-thumb{background:var(--border2);}
+  .insp-title{font-size:11px;font-weight:600;color:var(--text1);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .insp-group{margin-bottom:9px;}
+  .insp-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;font-weight:500;}
+  .insp-val{font-size:10.5px;color:var(--text2);}
+  .insp-val.mono{color:var(--accent);font-family:'JetBrains Mono',monospace;}
+  .insp-desc{font-size:10px;color:var(--text3);line-height:1.6;}
+  .insp-watch{width:100%;height:26px;border-radius:3px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent2);cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;transition:background .12s;letter-spacing:.3px;text-transform:uppercase;}
+  .insp-watch:hover{background:#223555;}
+  .insp-watch i{font-size:12px;}
+  .insp-section-hdr{font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.7px;margin:10px 0 5px;display:flex;align-items:center;gap:4px;font-weight:600;}
+  .insp-section-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* ── STATUS ── */
+  .status-bar{height:20px;background:var(--bg0);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:14px;flex-shrink:0;}
+  .status-item{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.3px;}
+  .status-dot{width:4px;height:4px;border-radius:50%;background:currentColor;}
+  .status-item.ok{color:#3a8a50;}
+  .status-item.info{color:var(--accent);}
+  .status-spacer{flex:1;}
+
+  /* ruler ticks */
+  .ruler-tick{position:absolute;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .ruler-tick-line{width:1px;height:6px;background:var(--border2);}
+  .ruler-tick-line.major{height:10px;background:var(--text3);}
+  .ruler-tick-label{font-size:8px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+  .insp-color-swatch{width:12px;height:12px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:middle;}
+</style>
+
+<div class="dvr" role="application" aria-label="DaVinci Resolve 20 Portfolio">
+
+  <!-- MENU BAR -->
+  <div class="menu-bar">
+    <div class="menu-logo">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#4e8de0" stroke-width="1.5"/><circle cx="10" cy="10" r="3.5" fill="#4e8de0"/><line x1="10" y1="2" x2="10" y2="5" stroke="#4e8de0" stroke-width="1.5"/><line x1="10" y1="15" x2="10" y2="18" stroke="#4e8de0" stroke-width="1.5"/><line x1="2" y1="10" x2="5" y2="10" stroke="#4e8de0" stroke-width="1.5"/><line x1="15" y1="10" x2="18" y2="10" stroke="#4e8de0" stroke-width="1.5"/></svg>
+      DaVinci Resolve 20
+    </div>
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">Trim</span>
+    <span class="menu-item">Timeline</span>
+    <span class="menu-item">Clip</span>
+    <span class="menu-item">Mark</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Playback</span>
+    <span class="menu-item">Workspace</span>
+    <div class="menu-spacer"></div>
+    <div class="menu-timecode" id="liveTC">00:00:00:00</div>
+    <div class="menu-icons">
+      <div class="menu-icon-btn"><i class="ti ti-bell" aria-hidden="true"></i></div>
+      <div class="menu-icon-btn"><i class="ti ti-user-circle" aria-hidden="true"></i></div>
+      <div class="menu-icon-btn"><i class="ti ti-settings" aria-hidden="true"></i></div>
+    </div>
+  </div>
+
+  <!-- PAGE TABS -->
+  <div class="page-tabs">
+    <div class="page-tab"><i class="ti ti-database" aria-hidden="true"></i>Media</div>
+    <div class="page-tab"><i class="ti ti-scissors" aria-hidden="true"></i>Cut</div>
+    <div class="page-tab active"><i class="ti ti-timeline" aria-hidden="true"></i>Edit</div>
+    <div class="page-tab"><i class="ti ti-keyframe" aria-hidden="true"></i>Fusion</div>
+    <div class="page-tab"><i class="ti ti-palette" aria-hidden="true"></i>Color</div>
+    <div class="page-tab"><i class="ti ti-wave-sine" aria-hidden="true"></i>Fairlight</div>
+    <div class="page-tab"><i class="ti ti-package-export" aria-hidden="true"></i>Deliver</div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="tool-btn active"><i class="ti ti-pointer" aria-hidden="true"></i></div>
+    <div class="tool-btn"><i class="ti ti-cut" aria-hidden="true"></i></div>
+    <div class="tool-btn"><i class="ti ti-ripple" aria-hidden="true"></i></div>
+    <div class="tool-btn"><i class="ti ti-arrows-left-right" aria-hidden="true"></i></div>
+    <div class="tool-sep"></div>
+    <div class="tool-btn"><i class="ti ti-magnet" aria-hidden="true"></i></div>
+    <div class="tool-btn"><i class="ti ti-lock" aria-hidden="true"></i></div>
+    <div class="tool-sep"></div>
+    <div class="tool-btn"><i class="ti ti-eye" aria-hidden="true"></i></div>
+    <div class="tool-btn"><i class="ti ti-wand" aria-hidden="true"></i>AI</div>
+    <div class="tool-spacer"></div>
+    <div class="tool-zoom">
+      <i class="ti ti-zoom-out" style="font-size:11px;color:var(--text3)" aria-hidden="true"></i>
+      <input type="range" min="1" max="5" value="3" style="width:60px;" id="zoomSlider">
+      <i class="ti ti-zoom-in" style="font-size:11px;color:var(--text3)" aria-hidden="true"></i>
+      <span id="zoomLabel">100%</span>
+    </div>
+    <div class="tool-sep"></div>
+    <div class="tool-btn"><i class="ti ti-layout-sidebar-right" aria-hidden="true"></i></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- MEDIA POOL -->
+    <div class="pool-panel">
+      <div class="panel-hdr">
+        <i class="ti ti-folders" aria-hidden="true"></i>
+        <span class="panel-hdr-title">Media Pool</span>
+        <div class="panel-hdr-btn"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="panel-hdr-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></div>
+      </div>
+      <div class="pool-toolbar">
+        <div class="pool-tb-btn on" title="Grid"><i class="ti ti-layout-grid" aria-hidden="true"></i></div>
+        <div class="pool-tb-btn" title="List"><i class="ti ti-list" aria-hidden="true"></i></div>
+        <div class="pool-tb-sep"></div>
+        <input class="pool-search" placeholder="Search clips…" type="text" id="poolSearch">
+      </div>
+      <div class="pool-list" id="poolList"></div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center">
+
+      <!-- VIEWER -->
+      <div class="viewer">
+        <div class="viewer-empty" id="vEmpty">
+          <i class="ti ti-player-play-filled" aria-hidden="true"></i>
+          <p>Select a project<br>from the Media Pool</p>
+        </div>
+        <div class="project-view" id="pView">
+          <div class="video-frame">
+            <div class="video-bg" id="videoBg">
+              <div class="play-overlay" id="playOverlay">
+                <i class="ti ti-player-play" id="playIco" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <div class="viewer-meta">
+            <div class="viewer-name" id="vName"></div>
+            <div class="viewer-tags" id="vTags"></div>
+          </div>
+        </div>
+
+        <!-- waveform scope decoration -->
+        <div class="viewer-scope">
+          <svg width="60" height="28" id="scopeSvg" viewBox="0 0 60 28"></svg>
+        </div>
+
+        <div class="viewer-controls">
+          <div class="vc-btn"><i class="ti ti-player-skip-back" aria-hidden="true"></i></div>
+          <div class="vc-btn"><i class="ti ti-player-track-prev" aria-hidden="true"></i></div>
+          <div class="vc-btn main" id="vcPlay"><i class="ti ti-player-play" aria-hidden="true"></i></div>
+          <div class="vc-btn"><i class="ti ti-player-track-next" aria-hidden="true"></i></div>
+          <div class="vc-btn"><i class="ti ti-player-skip-forward" aria-hidden="true"></i></div>
+          <div class="vc-sep"></div>
+          <div class="vc-tc" id="vcTc">00:00:00:00</div>
+          <div class="vc-sep"></div>
+          <div class="vc-btn"><i class="ti ti-maximize" aria-hidden="true"></i></div>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="tl-area">
+        <div class="tl-hdr">
+          <div class="tl-hdr-title"><i class="ti ti-brand-timeline" aria-hidden="true"></i>Portfolio Timeline</div>
+          <div class="tl-spacer"></div>
+          <div class="tl-tc" id="tlTc">00:00:00:00</div>
+          <div class="tl-btn" id="addBtn"><i class="ti ti-plus" aria-hidden="true"></i>Add to Timeline</div>
+        </div>
+        <div class="tl-ruler">
+          <div class="tl-ruler-inner" id="rulerInner"></div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-labels">
+            <div class="tl-label">V2</div>
+            <div class="tl-label">V1</div>
+            <div class="tl-label">A1</div>
+            <div class="tl-label">A2</div>
+          </div>
+          <div class="tl-lanes" id="lanesWrap">
+            <div class="tl-lane" id="laneV2"></div>
+            <div class="tl-lane" id="laneV1"></div>
+            <div class="tl-lane" id="laneA1"></div>
+            <div class="tl-lane" id="laneA2"></div>
+            <div class="tl-playhead" id="playhead" style="left:0px"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /center -->
+
+    <!-- INSPECTOR -->
+    <div class="inspector">
+      <div class="panel-hdr">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        <span class="panel-hdr-title">Inspector</span>
+        <div class="panel-hdr-btn"><i class="ti ti-x" aria-hidden="true"></i></div>
+      </div>
+      <div class="insp-empty" id="inspEmpty">No clip<br>selected</div>
+      <div class="insp-content" id="inspContent">
+        <div class="insp-title" id="inspTitle"></div>
+        <div class="insp-section-hdr">Metadata</div>
+        <div class="insp-group"><div class="insp-label">Duration</div><div class="insp-val mono" id="iDur"></div></div>
+        <div class="insp-group"><div class="insp-label">Resolution</div><div class="insp-val mono" id="iRes"></div></div>
+        <div class="insp-group"><div class="insp-label">Frame Rate</div><div class="insp-val mono" id="iFps"></div></div>
+        <div class="insp-group"><div class="insp-label">NLE</div><div class="insp-val" id="iNle"></div></div>
+        <div class="insp-section-hdr">Description</div>
+        <div class="insp-group"><div class="insp-desc" id="iDesc"></div></div>
+        <div class="insp-section-hdr">Color</div>
+        <div class="insp-group"><div class="insp-val" id="iColor"></div></div>
+        <div class="insp-watch" id="watchBtn"><i class="ti ti-external-link" aria-hidden="true"></i>Watch Project</div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-item ok"><div class="status-dot"></div>GPU Accelerated</div>
+    <div class="status-item"><div class="status-dot"></div>Proxy Off</div>
+    <div class="status-item info" id="stProject">No project loaded</div>
+    <div class="status-spacer"></div>
+    <div class="status-item">UHD 4K · 24fps</div>
+    <div class="status-item">DaVinci Resolve 20.1</div>
+  </div>
+
+</div>
+
+<script>
+const CLIPS = [
+  {
+    id:1, name:"AI Content Project",
+    sub:"Video Test",
+    dur:"1:24", res:"1080p", fps:"30fps",
+    nle:"DaVinci Resolve 20",
+    color:"#4e8de0", tcolor:"#1a2a3e",
+    grade:"Neutral / AI-balanced",
+    tags:["AI","Content","Test"],
+    desc:"Experimental AI-assisted content creation project. IntelliScript used to organize footage from script. Automated subtitle animation applied.",
+    tw:130, tl:8, aw:130, al:8
+  },
+  {
+    id:2, name:"Video Test",
+    sub:"Talking Head",
+    dur:"3:05", res:"4K", fps:"24fps",
+    nle:"DaVinci Resolve 20",
+    color:"#a855f7", tcolor:"#2a0a4e",
+    grade:"Natural skin tones",
+    tags:["Talking Head","Interview","4K"],
+    desc:"Single-camera talking head setup. Clean interview edit with J-cuts. AI noise reduction and skin tone targeting applied in color page.",
+    tw:170, tl:145, aw:170, al:145
+  },
+  {
+    id:3, name:"Project Lacrosse",
+    sub:"CjMedia",
+    dur:"2:45", res:"4K", fps:"60fps",
+    nle:"DaVinci Resolve 20",
+    color:"#22c55e", tcolor:"#042a10",
+    grade:"High contrast sports look",
+    tags:["Sports","CjMedia","60fps"],
+    desc:"Fast-paced lacrosse highlight reel for CjMedia. Beat-synced cuts using Auto Sync Music Track. Slow-motion sequences with AI Super Scale 4x upscaling.",
+    tw:160, tl:322, aw:160, al:322
+  },
+  {
+    id:4, name:"Cinematic Car Edit",
+    sub:"Project #1",
+    dur:"1:52", res:"4K", fps:"24fps",
+    nle:"DaVinci Resolve 20",
+    color:"#f97316", tcolor:"#2a0a00",
+    grade:"Orange & teal cinematic",
+    tags:["Cinematic","Automotive","Grade"],
+    desc:"Cinematic automotive edit. Creative grading with orange-teal split. Multi-angle synced footage with dynamic transitions and VFX overlays.",
+    tw:145, tl:490, aw:145, al:490
+  },
+  {
+    id:5, name:"Personal Project",
+    sub:"Showcase Reel",
+    dur:"4:30", res:"4K", fps:"24fps",
+    nle:"DaVinci Resolve 20",
+    color:"#ec4899", tcolor:"#2a0020",
+    grade:"Moody desaturated",
+    tags:["Personal","Reel","Creative"],
+    desc:"Personal creative showcase. Mixed footage types, editorial narrative pacing. Fairlight audio mix with Dialogue Matcher ambience controls.",
+    tw:200, tl:642, aw:200, al:642
+  },
+  {
+    id:6, name:"Cinematic Car Edit",
+    sub:"Project #2",
+    dur:"2:10", res:"4K", fps:"30fps",
+    nle:"Premiere Pro",
+    color:"#f59e0b", tcolor:"#2a1a00",
+    grade:"Warm golden hour",
+    tags:["Cinematic","Automotive","Golden"],
+    desc:"Second automotive cinematic project. Golden hour grade with warm highlights. Edited in Premiere Pro with color correction round-trip to DaVinci.",
+    tw:155, tl:850, aw:155, al:850
+  },
+  {
+    id:7, name:"Talking Head Podcast",
+    sub:"Multi-cam Project",
+    dur:"18:40", res:"1080p", fps:"30fps",
+    nle:"DaVinci Resolve 20",
+    color:"#06b6d4", tcolor:"#00121a",
+    grade:"Broadcast neutral",
+    tags:["Podcast","Multicam","Long-form"],
+    desc:"Long-form podcast production. Multi-camera sync using AI reference audio. Remove Silence applied to strip dead air. Checkerboard to new tracks for speaker separation.",
+    tw:240, tl:1012, aw:240, al:1012
+  }
+];
+
+let selected = null;
+let phX = 0;
+const zooms = ['50%','75%','100%','150%','200%'];
+
+function buildRuler(){
+  const r = document.getElementById('rulerInner');
+  for(let i=0;i<30;i++){
+    const t = document.createElement('div');
+    t.className='ruler-tick';
+    t.style.left=(i*80)+'px';
+    t.style.position='absolute';
+    const maj = i%4===0;
+    t.innerHTML=`<div class="ruler-tick-line${maj?' major':''}"></div>${maj?`<div class="ruler-tick-label">0${Math.floor(i/4*5)}:00</div>`:''}`;
+    r.appendChild(t);
+  }
+}
+
+function drawScope(){
+  const svg = document.getElementById('scopeSvg');
+  let pts='';
+  for(let x=0;x<60;x++){
+    const y = 14+Math.sin(x*.3)*5+Math.random()*6-3;
+    pts+=(x===0?'M':'L')+x+','+y.toFixed(1);
+  }
+  svg.innerHTML=`<path d="${pts}" stroke="#4e8de0" stroke-width="1" fill="none" opacity=".7"/>`;
+}
+
+function buildPool(){
+  const list = document.getElementById('poolList');
+  CLIPS.forEach(c=>{
+    const el = document.createElement('div');
+    el.className='pool-clip';
+    el.dataset.id=c.id;
+
+    const icon = c.tags.includes('Podcast') ? 'ti-microphone' :
+                 c.tags.includes('Sports') ? 'ti-ball-football' :
+                 c.tags.includes('AI') ? 'ti-robot' :
+                 c.tags.includes('Automotive') ? 'ti-car' :
+                 c.tags.includes('Talking Head') ? 'ti-user' : 'ti-movie';
+
+    el.innerHTML=`
+      <div class="pool-clip-thumb" style="background:${c.color}22;border:1px solid ${c.color}44">
+        <i class="ti ${icon}" style="color:${c.color}" aria-hidden="true"></i>
+      </div>
+      <div class="pool-clip-info">
+        <div class="clip-name">${c.name}</div>
+        <div class="clip-meta">${c.sub}</div>
+        <div class="clip-meta">${c.dur} · ${c.res}</div>
+      </div>`;
+    el.addEventListener('click',()=>selectClip(c));
+    list.appendChild(el);
+  });
+}
+
+function selectClip(c){
+  selected=c;
+  document.querySelectorAll('.pool-clip').forEach(el=>el.classList.remove('sel'));
+  document.querySelector(`.pool-clip[data-id="${c.id}"]`).classList.add('sel');
+
+  // VIEWER
+  document.getElementById('vEmpty').style.display='none';
+  const pv = document.getElementById('pView');
+  pv.classList.add('vis');
+
+  const bg = document.getElementById('videoBg');
+  bg.style.background=`linear-gradient(135deg, ${c.color}25 0%, #050508 70%)`;
+
+  const iconTag = c.tags.includes('Podcast') ? 'ti-microphone' :
+                  c.tags.includes('Sports') ? 'ti-ball-football' :
+                  c.tags.includes('AI') ? 'ti-robot' :
+                  c.tags.includes('Automotive') ? 'ti-car' :
+                  c.tags.includes('Talking Head') ? 'ti-user' : 'ti-movie';
+
+  document.getElementById('vName').textContent=c.name+' — '+c.sub;
+  const tagsEl=document.getElementById('vTags');
+  tagsEl.innerHTML=c.tags.map(t=>`<span class="vtag">${t}</span>`).join('');
+
+  // INSPECTOR
+  document.getElementById('inspEmpty').style.display='none';
+  document.getElementById('inspContent').classList.add('vis');
+  document.getElementById('inspTitle').textContent=c.name;
+  document.getElementById('iDur').textContent=c.dur;
+  document.getElementById('iRes').textContent=c.res;
+  document.getElementById('iFps').textContent=c.fps;
+  document.getElementById('iNle').textContent=c.nle;
+  document.getElementById('iDesc').textContent=c.desc;
+  document.getElementById('iColor').innerHTML=`<span class="insp-color-swatch" style="background:${c.color}"></span>${c.grade}`;
+
+  document.getElementById('stProject').textContent=c.name+' · '+c.sub;
+
+  // Draw waveform scope
+  drawScope();
+
+  addToTimeline(c);
+}
+
+function addToTimeline(c){
+  const laneV1=document.getElementById('laneV1');
+  if(laneV1.querySelector(`[data-pid="${c.id}"]`)){
+    animatePH(c.tl+c.tw/2);
+    return;
+  }
+
+  // V1 block
+  const v=document.createElement('div');
+  v.className='tl-block';
+  v.dataset.pid=c.id;
+  v.style.cssText=`left:${c.tl}px;width:${c.tw}px;background:${c.color}38;border:1px solid ${c.color}70;color:${c.color};`;
+  v.textContent=c.name.split(' ').slice(0,2).join(' ');
+  laneV1.appendChild(v);
+
+  // A1 block
+  const a=document.createElement('div');
+  a.className='tl-block';
+  a.dataset.pid=c.id;
+  a.style.cssText=`left:${c.al}px;width:${c.aw}px;background:${c.color}18;border:1px solid ${c.color}44;color:${c.color}88;`;
+  a.textContent='♪ '+c.sub;
+  document.getElementById('laneA1').appendChild(a);
+
+  animatePH(c.tl+c.tw/2);
+}
+
+function animatePH(tx){
+  const ph=document.getElementById('playhead');
+  const sx=phX, d=tx-sx, dur=380, t0=performance.now();
+  (function step(now){
+    const t=Math.min((now-t0)/dur,1);
+    const e=t<.5?2*t*t:-1+(4-2*t)*t;
+    phX=sx+d*e;
+    ph.style.left=phX+'px';
+    const tc=Math.round(phX/80);
+    const h=String(Math.floor(tc/3600)).padStart(2,'0');
+    const m=String(Math.floor(tc%3600/60)).padStart(2,'0');
+    const s=String(tc%60).padStart(2,'0');
+    const code=`${h}:${m}:${s}:00`;
+    document.getElementById('tlTc').textContent=code;
+    document.getElementById('vcTc').textContent=code;
+    if(t<1)requestAnimationFrame(step);
+  })(t0);
+}
+
+// Live timecode
+let frame=0;
+setInterval(()=>{
+  if(!selected)return;
+  frame=(frame+1)%(24*60*60*24);
+  const fr=frame%24,s=Math.floor(frame/24)%60,m=Math.floor(frame/1440)%60,h=Math.floor(frame/86400);
+  const p=n=>String(n).padStart(2,'0');
+  document.getElementById('liveTC').textContent=`${p(h)}:${p(m)}:${p(s)}:${p(fr)}`;
+},42);
+
+// Search filter
+document.getElementById('poolSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('.pool-clip').forEach(el=>{
+    const id=parseInt(el.dataset.id);
+    const c=CLIPS.find(x=>x.id===id);
+    el.style.display=(c.name.toLowerCase().includes(q)||c.sub.toLowerCase().includes(q)||c.tags.some(t=>t.toLowerCase().includes(q)))?'':'none';
+  });
+});
+
+// Zoom
+document.getElementById('zoomSlider').addEventListener('input',function(){
+  document.getElementById('zoomLabel').textContent=zooms[this.value-1];
+});
+
+// Play toggle
+document.getElementById('playOverlay').addEventListener('click',function(){
+  const ico=document.getElementById('playIco');
+  ico.className=ico.className.includes('player-play')?'ti ti-player-pause':'ti ti-player-play';
+});
+
+// Add to TL
+document.getElementById('addBtn').addEventListener('click',()=>{ if(selected) addToTimeline(selected); });
+
+buildRuler();
+buildPool();
+drawScope();
+</script>
